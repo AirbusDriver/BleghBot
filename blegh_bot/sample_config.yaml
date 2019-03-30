@@ -1,0 +1,7 @@
+reddit:
+  user_agent: user_agent string
+  client_id: client_id value
+  client_secret: client_secret value
+  password: bot password
+  username: bot username
+
