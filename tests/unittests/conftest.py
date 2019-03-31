@@ -1,5 +1,3 @@
-from unittest.mock import MagicMock, Mock, patch
-
 import pytest
 
 from blegh_bot.constants import BASE_DIR
@@ -15,3 +13,5 @@ def use_sample_config_yaml(monkeypatch):
 def sample_config(use_sample_config_yaml):
     from blegh_bot.config import file_config
     return file_config
+
+
