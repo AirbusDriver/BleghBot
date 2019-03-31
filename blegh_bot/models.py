@@ -49,7 +49,7 @@ class SongSubmission(Interaction):
     """
     Model to represent submissions posted that contain a track posting.
     """
-    TITLE_RE = re.compile(r'(?P<artist>[\w\s]*\w)\s*-\s*(?P<track>[\w\s]*\w)', re.IGNORECASE)
+    TITLE_RE = re.compile(r'\W?(?P<artist>[\w\s]*\w)\W?\s*-\s*\W?(?P<track>[\w\s]*\w)\W?.*', re.IGNORECASE)
 
     def __init__(self, submission_id, track, artist, shortlink, redditor=None, posted_on_utc=None):
         self.submission_id = submission_id
