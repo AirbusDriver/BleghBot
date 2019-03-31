@@ -1,4 +1,4 @@
-from unittest.mock import Mock, MagicMock, patch
+from datetime import datetime
 
 import pytest
 
@@ -16,10 +16,6 @@ class TestGetMediaTitle:
 
 
 class TestSongSubmissionInteraction:
-    def test_submission_init_holds_submission_object(self, unpickled_submissions):
-        song_submission = models.SongSubmission(unpickled_submissions[3])
-        assert isinstance(song_submission, models.SongSubmission)
-        assert song_submission.submission is unpickled_submissions[3]
 
     @pytest.mark.parametrize('submission_index, should_pass', [
         pytest.param(0, False, id='weekly rec submission raises'),
@@ -36,3 +32,14 @@ class TestSongSubmissionInteraction:
         else:
             with pytest.raises(InteractionParsingError):
                 models.SongSubmission.verify_interaction_type(submission)
+
+    def test_from_reddit_object_returns_parsed_song_submission(self, unpickled_submissions):
+        submission = unpickled_submissions[3]
+        result = models.SongSubmission.from_reddit_object(submission)
+
+        assert result.artist == 'Periphery'
+        assert result.track == 'Facepalm Mute'
+        assert result.redditor == 'mullen711'
+        assert result.submission_id == 'b7l3pq'
+        assert result.posted_on_utc == datetime.utcfromtimestamp(1554016786)
+        assert result.shortlink == 'https://redd.it/b7l3pq'
