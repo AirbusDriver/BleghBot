@@ -1,4 +1,6 @@
 from unittest.mock import MagicMock, Mock, patch
+from pathlib import Path
+import pickle
 
 import pytest
 
@@ -15,3 +17,18 @@ def use_sample_config_yaml(monkeypatch):
 def sample_config(use_sample_config_yaml):
     from blegh_bot.config import file_config
     return file_config
+
+
+@pytest.fixture('session')
+def unpickled_submissions(data_dir):
+    """
+    Return a list of 20 reddit submission objects. The vars() information is in the `pickled_submissions.json` file
+    in the `data` directory
+
+    :return: list of 20 reddit submission objects
+    :rtype: list
+    """
+    pickle_file = Path(data_dir.joinpath('pickled_submissions'))
+    assert pickle_file.exists()
+    data = pickle_file.read_bytes()
+    return pickle.loads(data)
