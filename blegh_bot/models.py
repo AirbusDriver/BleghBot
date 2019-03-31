@@ -8,7 +8,11 @@ from blegh_bot.exceptions import InteractionParsingError
 
 
 def get_media_title(submission):
-    """Return the title of the media content of the `submission` if available, else return None"""
+    """
+    Return the title of the media content of the `submission` if available, else return None
+
+    :return: `submission` if it has title available
+    """
     try:
         return submission.media['oembed']['title']
     except:
@@ -16,12 +20,21 @@ def get_media_title(submission):
 
 
 class Interaction(ABC):
+    """
+    Interface for the various types of interactions the bot may encounter.
+
+    Abstract Methods
+    ----------------
+    - `Interaction.from_reddit_object()`: classmethod
+    - `Interaction.verify_interaction_type()`: classmethod
+    """
 
     @classmethod
     @abstractmethod
-    def from_reddit_object(self, reddit_object):
+    def from_reddit_object(cls, reddit_object):
         """
-        Return an instance of class from a reddit object
+        Return an instance of class from a reddit object. Should call `cls.verify_interaction_type(reddit_object)` in
+        the function to ensure proper exceptions are raised if  reddit_object` doesn't comply.
 
         :param reddit_object:
         :type reddit_object:
@@ -34,13 +47,14 @@ class Interaction(ABC):
     @abstractmethod
     def verify_interaction_type(cls, reddit_object):
         """
-        Return self if the Interaction subclass is the appropriate response to the `reddit_object`, else raise
-        `InteractionParsingError` if the object does not conform
+        Return `reddit_object`, pass-through, if the :class:`Interaction` subclass is the appropriate response to the
+        `reddit_object`, else raise :exception:`InteractionParsingError` if the object does not conform
 
-        :param reddit_object:
-        :type reddit_object:
-        :return:
-        :rtype:
+        :raises InteractionParsingError: if the `reddit_object` is not this type of interaction
+
+        :param reddit_object: any reddit object to check
+        :type reddit_object: any
+        :return: the `reddit_object`
         """
         pass
 
@@ -48,8 +62,14 @@ class Interaction(ABC):
 class SongSubmission(Interaction):
     """
     Model to represent submissions posted that contain a track posting.
+
+    Interaction Definition
+    ----------------------
+    * Interaction is a Submission
+    * Submission has a song link with a formatted title "artist - track"
+
     """
-    TITLE_RE = re.compile(r'\W?(?P<artist>[\w\s]*\w)\W?\s*-\s*\W?(?P<track>[\w\s]*\w)\W?.*', re.IGNORECASE)
+    TITLE_RE = re.compile(r'\W?(?P<artist>[\w&\s]*\w)\W?\s*-\s*\W?(?P<track>[\w&\s]*\w)\W?.*', re.IGNORECASE)
 
     def __init__(self, submission_id, track, artist, shortlink, redditor=None, posted_on_utc=None):
         self.submission_id = submission_id
