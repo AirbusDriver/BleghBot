@@ -4,6 +4,16 @@ from pytest_bdd import given, then, scenario
 
 from blegh_bot.models import SongSubmission, InteractionParsingError
 
+TRACK_INFO = {
+    3: ['Periphery', 'Facepalm Mute'],
+    9: ['In Hearts Wake', 'Cottonmouth'],
+    11: ['Underoath', 'In Motion'],
+    13: ['I Fight Bears', 'Lost The Fight'],
+    15: ['Tethra', 'The Hourglass'],
+    16: ['Currents', 'Forever Marked'],
+    18: ['Of Mice & Men', 'You Make Me Sick'],
+}
+
 
 @scenario('../features/interaction_parsing.feature', 'Song posts are identified')
 def test_song_post_identified():
@@ -19,7 +29,7 @@ def test_outlined(parsed_interaction):
 
 @given('There is a <valid> song submission from the feed')
 def valid_song_submission_from_the_feed(valid, unpickled_submissions):
-    return unpickled_submissions[int(valid)]
+    return unpickled_submissions[valid]
 
 
 @given('A user tries to create a song interaction from it')
@@ -47,7 +57,7 @@ def parse_post(valid_song_submission):
 
 @given('There is a <valid> song submission from the feed')
 def valid_song_from_pickled_submissions(valid, unpickled_submissions):
-    return unpickled_submissions[int(valid)]
+    return unpickled_submissions[valid]
 
 
 @then('I should have a SongInteraction')
@@ -69,3 +79,9 @@ def test_attrs(parse_post):
 def test_raises_interaction_parsing_error(invalid_song_submission):
     with pytest.raises(InteractionParsingError) as exc_info:
         SongSubmission.from_reddit_object(invalid_song_submission)
+
+
+@then('The <valid> track should be properly parsed')
+def tracks_parsed_okay(valid, parsed_interaction):
+    track_info = [parsed_interaction.artist, parsed_interaction.track]
+    assert TRACK_INFO[valid] == track_info

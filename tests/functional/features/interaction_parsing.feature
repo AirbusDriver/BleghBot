@@ -16,7 +16,7 @@ Feature: Interactions from reddit objects
     Given There is a <valid> song submission from the feed
     Given A user tries to create a song interaction from it
     Then I should have a SongInteraction
-    And I should be able to see the track information
+    And The <valid> track should be properly parsed
 
     Examples:
       | valid |
@@ -27,4 +27,3 @@ Feature: Interactions from reddit objects
       | 15    |
       | 16    |
       | 18    |
-
